@@ -7,31 +7,23 @@
  *
  * Beeping thanks to John T Kohl.
  *
- * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics
- *   Chars, and VT100 enhancements by Peter MacDonald.
+ * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics Chars, and VT100 enhancements by Peter MacDonald.
  *
- * Copy and paste function by Andrew Haylett,
- *   some enhancements by Alessandro Rubini.
+ * Copy and paste function by Andrew Haylett, some enhancements by Alessandro Rubini.
  *
- * Code to check for different video-cards mostly by Galen Hunt,
- * <g-hunt@ee.utah.edu>
+ * Code to check for different video-cards mostly by Galen Hunt, <g-hunt@ee.utah.edu>
  *
- * Rudimentary ISO 10646/Unicode/UTF-8 character set support by
- * Markus Kuhn, <mskuhn@immd4.informatik.uni-erlangen.de>.
+ * Rudimentary ISO 10646/Unicode/UTF-8 character set support by Markus Kuhn, <mskuhn@immd4.informatik.uni-erlangen.de>.
  *
- * Dynamic allocation of consoles, aeb@cwi.nl, May 1994
- * Resizing of consoles, aeb, 940926
+ * Dynamic allocation of consoles, aeb@cwi.nl, May 1994 Resizing of consoles, aeb, 940926
  *
- * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94
- * <poe@daimi.aau.dk>
+ * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94 <poe@daimi.aau.dk>
  *
- * User-defined bell sound, new setterm control sequences and printk
- * redirection by Martin Mares <mj@k332.feld.cvut.cz> 19-Nov-95
+ * User-defined bell sound, new setterm control sequences and printk redirection by Martin Mares <mj@k332.feld.cvut.cz> 19-Nov-95
  *
  * APM screenblank bug fixed Takashi Manabe <manabe@roy.dsl.tutics.tut.jp>
  *
- * Merge with the abstract console driver by Geert Uytterhoeven
- * <geert@linux-m68k.org>, Jan 1997.
+ * Merge with the abstract console driver by Geert Uytterhoeven <geert@linux-m68k.org>, Jan 1997.
  *
  *   Original m68k console driver modifications by
  *
@@ -47,20 +39,15 @@
  *   (struct consw) which contains function pointers to console operations
  *   (see <linux/console.h> for more information).
  *
- * Support for changeable cursor shape
- * by Pavel Machek <pavel@atrey.karlin.mff.cuni.cz>, August 1997
+ * Support for changeable cursor shape by Pavel Machek <pavel@atrey.karlin.mff.cuni.cz>, August 1997
  *
- * Ported to i386 and con_scrolldelta fixed
- * by Emmanuel Marty <core@ggi-project.org>, April 1998
+ * Ported to i386 and con_scrolldelta fixed by Emmanuel Marty <core@ggi-project.org>, April 1998
  *
- * Resurrected character buffers in videoram plus lots of other trickery
- * by Martin Mares <mj@atrey.karlin.mff.cuni.cz>, July 1998
+ * Resurrected character buffers in videoram plus lots of other trickery by Martin Mares <mj@atrey.karlin.mff.cuni.cz>, July 1998
  *
- * Removed old-style timers, introduced console_timer, made timer
- * deletion SMP-safe.  17Jun00, Andrew Morton
+ * Removed old-style timers, introduced console_timer, made timer deletion SMP-safe.  17Jun00, Andrew Morton
  *
- * Removed console_lock, enabled interrupts across all console operations
- * 13 March 2001, Andrew Morton
+ * Removed console_lock, enabled interrupts across all console operations 13 March 2001, Andrew Morton
  *
  * Fixed UTF-8 mode so alternate charset modes always work according
  * to control sequences interpreted in do_con_trol function
@@ -109,6 +96,7 @@
 #define CON_DRIVER_FLAG_INIT   2
 #define CON_DRIVER_FLAG_ATTR   4
 
+
 struct con_driver
 {
     const struct consw *con;
@@ -119,6 +107,7 @@ struct con_driver
     int last;
     int flag;
 };
+
 
 static struct con_driver registered_con_driver[MAX_NR_CON_DRIVER];
 const struct consw *conswitchp;
@@ -143,18 +132,18 @@ struct vc vc_cons [MAX_NR_CONSOLES];
     static const struct consw *con_driver_map[MAX_NR_CONSOLES];
 #endif
 
-static int  con_open         (struct tty_struct *, struct file *);
-static void vc_init          (struct vc_data *vc, unsigned int rows, unsigned int cols, int do_clear);
-static void gotoxy           (struct vc_data *vc, int new_x, int new_y);
-static void save_cur         (struct vc_data *vc);
-static void reset_terminal   (struct vc_data *vc, int do_clear);
-static void con_flush_chars  (struct tty_struct *tty);
-static int  set_vesa_blanking(char __user *p);
-static void set_cursor       (struct vc_data *vc);
-static void hide_cursor      (struct vc_data *vc);
-static void console_callback (struct work_struct *ignored);
+static int  con_open         (struct tty_struct*, struct file*);
+static void vc_init          (struct vc_data* vc, unsigned int rows, unsigned int cols, int do_clear);
+static void gotoxy           (struct vc_data* vc, int new_x, int new_y);
+static void save_cur         (struct vc_data* vc);
+static void reset_terminal   (struct vc_data* vc, int do_clear);
+static void con_flush_chars  (struct tty_struct* tty);
+static int  set_vesa_blanking(char __user* p);
+static void set_cursor       (struct vc_data* vc);
+static void hide_cursor      (struct vc_data* vc);
+static void console_callback (struct work_struct* ignored);
 static void blank_screen_t   (unsigned long dummy);
-static void set_palette      (struct vc_data *vc);
+static void set_palette      (struct vc_data* vc);
 
 static int printable;		/* Is console ready for printing? */
 int default_utf8 = true;
@@ -176,7 +165,7 @@ int console_blanked;
 
 static int vesa_blank_mode; /* 0:none 1:suspendV 2:suspendH 3:powerdown */
 static int vesa_off_interval;
-static int blankinterval = 10*60;
+static int blankinterval = 10 * 60;
 core_param(consoleblank, blankinterval, int, 0444);
 
 static DECLARE_WORK(console_work, console_callback);
@@ -471,7 +460,7 @@ static void update_attr(struct vc_data *vc)
 /* Note: inverting the screen twice should revert to the original state */
 void invert_screen(struct vc_data *vc, int offset, int count, int viewed)
 {
-    unsigned short *p;
+    unsigned short* p;
     
     WARN_CONSOLE_UNLOCKED();
     
@@ -481,45 +470,42 @@ void invert_screen(struct vc_data *vc, int offset, int count, int viewed)
     if (vc->vc_sw->con_invert_region)
         vc->vc_sw->con_invert_region(vc, p, count);
     #ifndef VT_BUF_VRAM_ONLY
-    else
+        else
         {
-	    u16 *q = p;
+	    u16* q = p;
 	    int cnt = count;
 	    u16 a;
 
 	    if (!vc->vc_can_do_color)
-	        while (cnt--)
+	        for (; cnt--; q++)
 		{
 		    a = scr_readw(q);
 		    a ^= 0x0800;
 		    scr_writew(a, q);
-		    q++;
 		}
 	    else if (vc->vc_hi_font_mask == 0x100)
-	        while (cnt--)
+	        for (; cnt--; q++)
 		{
 		    a = scr_readw(q);
-		    a = ((a) & 0x11ff) | (((a) & 0xe000) >> 4) | (((a) & 0x0e00) << 4);
+		    a = (a & 0x11ff) | ((a & 0xe000) >> 4) | ((a & 0x0e00) << 4);
 		    scr_writew(a, q);
-		    q++;
 		}
 	    else
-	        while (cnt--)
+	        for (; cnt--; q++)
 		{
 		    a = scr_readw(q);
-		    a = ((a) & 0x88ff) | (((a) & 0x7000) >> 4) | (((a) & 0x0700) << 4);
+		    a = (a & 0x88ff) | ((a & 0x7000) >> 4) | ((a & 0x0700) << 4);
 		    scr_writew(a, q);
-		    q++;
 		}
 	}
     #endif
     
     if (DO_UPDATE(vc))
-        do_update_region(vc, (unsigned long) p, count);
+        do_update_region(vc, (unsigned long)p, count);
 }
 
 /* used by selection: complement pointer position */
-void complement_pos(struct vc_data *vc, int offset)
+void complement_pos(struct vc_data* vc, int offset)
 {
     static int old_offset = -1;
     static unsigned short old;
@@ -553,9 +539,9 @@ void complement_pos(struct vc_data *vc, int offset)
     }
 }
 
-static void insert_char(struct vc_data *vc, unsigned int nr)
+static void insert_char(struct vc_data* vc, unsigned int nr)
 {
-    unsigned short *p, *q = (unsigned short *)vc->vc_pos;
+    unsigned short *p, *q = (unsigned short*)vc->vc_pos;
 
     p = q + vc->vc_cols - nr - vc->vc_x;
     
@@ -618,23 +604,23 @@ static void add_softcursor(struct vc_data *vc)
     if ((type & 0x20) && ((softcursor_original & 0x7000) == (i & 0x7000)))  i ^= 0x7000;
     if ((type & 0x40) && ((i & 0x700) == ((i & 0x7000) >> 4)))              i ^= 0x0700;
     
-    scr_writew(i, (u16 *) vc->vc_pos);
+    scr_writew(i, (u16*)vc->vc_pos);
     if (DO_UPDATE(vc))
         vc->vc_sw->con_putc(vc, i, vc->vc_y, vc->vc_x);
 }
 
-static void hide_softcursor(struct vc_data *vc)
+static void hide_softcursor(struct vc_data* vc)
 {
     if (softcursor_original != -1)
     {
-        scr_writew(softcursor_original, (u16 *)vc->vc_pos);
+        scr_writew(softcursor_original, (u16*)vc->vc_pos);
 	if (DO_UPDATE(vc))
 	    vc->vc_sw->con_putc(vc, softcursor_original, vc->vc_y, vc->vc_x);
 	softcursor_original = -1;
     }
 }
 
-static void hide_cursor(struct vc_data *vc)
+static void hide_cursor(struct vc_data* vc)
 {
     if (vc == sel_cons)
       clear_selection();
@@ -642,7 +628,7 @@ static void hide_cursor(struct vc_data *vc)
     hide_softcursor(vc);
 }
 
-static void set_cursor(struct vc_data *vc)
+static void set_cursor(struct vc_data* vc)
 {
     if (!IS_FG(vc) || console_blanked || vc->vc_mode == KD_GRAPHICS)
         return;
@@ -658,7 +644,7 @@ static void set_cursor(struct vc_data *vc)
        hide_cursor(vc);
 }
 
-static void set_origin(struct vc_data *vc)
+static void set_origin(struct vc_data* vc)
 {
     WARN_CONSOLE_UNLOCKED();
 
@@ -669,7 +655,7 @@ static void set_origin(struct vc_data *vc)
     vc->vc_pos = vc->vc_origin + vc->vc_size_row * vc->vc_y + 2 * vc->vc_x;
 }
 
-static inline void save_screen(struct vc_data *vc)
+static inline void save_screen(struct vc_data* vc)
 {
     WARN_CONSOLE_UNLOCKED();
 
@@ -681,9 +667,9 @@ static inline void save_screen(struct vc_data *vc)
  *	Redrawing of screen
  */
 
-static void clear_buffer_attributes(struct vc_data *vc)
+static void clear_buffer_attributes(struct vc_data* vc)
 {
-    unsigned short *p = (unsigned short *)vc->vc_origin;
+    unsigned short* p = (unsigned short*)vc->vc_origin;
     int count = vc->vc_screenbuf_size >> 1;
     int mask  = vc->vc_hi_font_mask | 0xff;
 
@@ -691,7 +677,7 @@ static void clear_buffer_attributes(struct vc_data *vc)
         scr_writew((scr_readw(p)&mask) | (vc->vc_video_erase_char & ~mask), p);
 }
 
-void redraw_screen(struct vc_data *vc, int is_switch)
+void redraw_screen(struct vc_data* vc, int is_switch)
 {
     int redraw = 0;
 
@@ -706,7 +692,7 @@ void redraw_screen(struct vc_data *vc, int is_switch)
 
     if (is_switch)
     {
-	struct vc_data *old_vc = vc_cons[fg_console].d;
+	struct vc_data* old_vc = vc_cons[fg_console].d;
 	
 	if (old_vc == vc)
 	    return;
@@ -773,7 +759,7 @@ int vc_cons_allocated(unsigned int i)
     return (i < MAX_NR_CONSOLES && vc_cons[i].d);
 }
 
-static void visual_init(struct vc_data *vc, int num, int init)
+static void visual_init(struct vc_data* vc, int num, int init)
 {
     /* ++Geert: vc->vc_sw->con_init determines console size */
     if (vc->vc_sw)
@@ -811,7 +797,7 @@ int vc_allocate(unsigned int currcons) // return 0 on success
     
     if (!vc_cons[currcons].d)
     {
-        struct vc_data *vc;
+        struct vc_data* vc;
 	struct vt_notifier_param param;
 
 	/* prevent users from taking too much memory */
@@ -858,7 +844,7 @@ int vc_allocate(unsigned int currcons) // return 0 on success
     return 0;
 }
 
-static inline int resize_screen(struct vc_data *vc, int width, int height, int user)
+static inline int resize_screen(struct vc_data* vc, int width, int height, int user)
 {
     /* Resizes the resolution of the display adapater */
     int err = 0;
@@ -893,14 +879,14 @@ static inline int resize_screen(struct vc_data *vc, int width, int height, int u
  *	ctrl_lock of the tty IFF a tty is passed.
  */
 
-static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc, unsigned int cols, unsigned int lines)
+static int vc_do_resize(struct tty_struct* tty, struct vc_data* vc, unsigned int cols, unsigned int lines)
 {
     unsigned long old_origin, new_origin, new_scr_end, rlth, rrem, err = 0;
     unsigned long end;
     unsigned int old_rows, old_row_size;
     unsigned int new_cols, new_rows, new_row_size, new_screen_size;
     unsigned int user;
-    unsigned short *newscreen;
+    unsigned short* newscreen;
 
     WARN_CONSOLE_UNLOCKED();
 
@@ -972,15 +958,15 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc, unsigned int
     
     while (old_origin < end)
     {
-	scr_memcpyw((unsigned short *) new_origin, (unsigned short *) old_origin, rlth);
+	scr_memcpyw((unsigned short*) new_origin, (unsigned short*) old_origin, rlth);
 	if (rrem)
-	    scr_memsetw((void *)(new_origin + rlth), vc->vc_video_erase_char, rrem);
+	    scr_memsetw((void*)(new_origin + rlth), vc->vc_video_erase_char, rrem);
 	old_origin += old_row_size;
 	new_origin += new_row_size;
     }
     
     if (new_scr_end > new_origin)
-        scr_memsetw((void *)new_origin, vc->vc_video_erase_char, new_scr_end - new_origin);
+        scr_memsetw((void*)new_origin, vc->vc_video_erase_char, new_scr_end - new_origin);
     
     kfree(vc->vc_screenbuf);
     vc->vc_screenbuf = newscreen;
@@ -1022,7 +1008,7 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc, unsigned int
  *	vc->port.tty
  */
 
-int vc_resize(struct vc_data *vc, unsigned int cols, unsigned int rows)
+int vc_resize(struct vc_data* vc, unsigned int cols, unsigned int rows)
 {
     return vc_do_resize(vc->port.tty, vc, cols, rows);
 }
@@ -1039,9 +1025,9 @@ int vc_resize(struct vc_data *vc, unsigned int cols, unsigned int rows)
  *	Takes the console sem and the called methods then take the tty
  *	termios_mutex and the tty ctrl_lock in that order.
  */
-static int vt_resize(struct tty_struct *tty, struct winsize *ws)
+static int vt_resize(struct tty_struct* tty, struct winsize* ws)
 {
-    struct vc_data *vc = tty->driver_data;
+    struct vc_data* vc = tty->driver_data;
     int ret;
     
     console_lock();
@@ -1056,7 +1042,7 @@ void vc_deallocate(unsigned int currcons)
 
     if (vc_cons_allocated(currcons))
     {
-	struct vc_data *vc = vc_cons[currcons].d;
+	struct vc_data* vc = vc_cons[currcons].d;
 	struct vt_notifier_param param = { .vc = vc };
 
 	atomic_notifier_call_chain(&vt_notifier_list, VT_DEALLOCATE, &param);
@@ -4038,92 +4024,7 @@ void poke_blanked_console(void)
     }
 }
 
-/*
- *	Palettes
- */
 
-static void set_palette(struct vc_data *vc)
-{
-    WARN_CONSOLE_UNLOCKED();
-    
-    if (vc->vc_mode != KD_GRAPHICS)
-        vc->vc_sw->con_set_palette(vc, color_table);
-}
-
-static int set_get_cmap(unsigned char __user *arg, int set)
-{
-    int i, j, k;
-
-    WARN_CONSOLE_UNLOCKED();
-
-    for (i = 0; i < 16; i++)
-        if (set)
-	{
-	    get_user(default_red[i], arg++);
-	    get_user(default_grn[i], arg++);
-	    get_user(default_blu[i], arg++);
-	}
-	else
-	{
-	    put_user(default_red[i], arg++);
-	    put_user(default_grn[i], arg++);
-	    put_user(default_blu[i], arg++);
-	}
-    
-    if (set)
-	for (i = 0; i < MAX_NR_CONSOLES; i++)
-	    if (vc_cons_allocated(i))
-	    {
-		for (j = k = 0; j < 16; j++)
-		{
-		    vc_cons[i].d->vc_palette[k++] = default_red[j];
-		    vc_cons[i].d->vc_palette[k++] = default_grn[j];
-		    vc_cons[i].d->vc_palette[k++] = default_blu[j];
-		}
-		set_palette(vc_cons[i].d);
-	    }
-    
-    return 0;
-}
-
-/*
- * Load palette into the DAC registers. arg points to a colour
- * map, 3 bytes per colour, 16 colours, range from 0 to 255.
- */
-
-int con_set_cmap(unsigned char __user *arg)
-{
-    int rc;
-    
-    console_lock();
-    rc = set_get_cmap (arg,1);
-    console_unlock();
-    
-    return rc;
-}
-
-int con_get_cmap(unsigned char __user *arg)
-{
-    int rc;
-    
-    console_lock();
-    rc = set_get_cmap (arg,0);
-    console_unlock();
-    
-    return rc;
-}
-
-void reset_palette(struct vc_data *vc)
-{
-    int j, k;
-    for (j=k=0; j<16; j++)
-    {
-        vc->vc_palette[k++] = default_red[j];
-	vc->vc_palette[k++] = default_grn[j];
-	vc->vc_palette[k++] = default_blu[j];
-    }
-    set_palette(vc);
-}
 
 /*
  *  Font switching
@@ -4393,9 +4294,127 @@ void vcs_scr_updated(struct vc_data *vc)
     notify_update(vc);
 }
 
-/*
- *	Visible symbols for modules
+
+
+
+
+
+//////////////////////////////////////////////////
+//                   Palettes                   //
+//////////////////////////////////////////////////
+
+/**
+ * Sets the (default) colour map
+ * 
+ * @param   arg  The colours, 3 continous bytes per colour; 16 colours
+ * @return       0 iff successful
  */
+int con_set_cmap(unsigned char __user* arg)
+{
+    int rc;
+    
+    console_lock();
+    rc = set_get_cmap(arg, 1);
+    console_unlock();
+    
+    return rc;
+}
+
+/**
+ * Gets the (default) colour map
+ * 
+ * @param   arg  The colours, 3 continous bytes per colour; 16 colours
+ * @return       0 iff successful
+ */
+int con_get_cmap(unsigned char __user* arg)
+{
+    int rc;
+    
+    console_lock();
+    rc = set_get_cmap(arg, 0);
+    console_unlock();
+    
+    return rc;
+}
+
+/**
+ * Resets the colour palette
+ * 
+ * @param  vc  The virtual console
+ */
+void reset_palette(struct vc_data* vc)
+{
+    int j, k;
+    
+    for (j = k = 0; j < 16; j++)
+    {
+        vc->vc_palette[k++] = default_red[j];
+	vc->vc_palette[k++] = default_grn[j];
+	vc->vc_palette[k++] = default_blu[j];
+    }
+    
+    set_palette(vc);
+}
+
+/**
+ * Applies the colour palette to the console
+ * 
+ * @param  vc  The virtual console
+ */
+static void set_palette(struct vc_data* vc)
+{
+    WARN_CONSOLE_UNLOCKED();
+    
+    if (vc->vc_mode != KD_GRAPHICS)
+        vc->vc_sw->con_set_palette(vc, color_table);
+}
+
+/**
+ * Gets or sets the (default) colour map
+ * 
+ * @param   arg  The colours, 3 continous bytes per colour; 16 colours
+ * @param   set  0 iff the colour map should be read, otherwise set
+ * @return       0 iff successful
+ */
+static int set_get_cmap(unsigned char __user* arg, int set)
+{
+    int i, j, k;
+
+    WARN_CONSOLE_UNLOCKED();
+
+    for (i = 0; i < 16; i++)
+        if (set)
+	{
+	    get_user(default_red[i], arg++);
+	    get_user(default_grn[i], arg++);
+	    get_user(default_blu[i], arg++);
+	}
+	else
+	{
+	    put_user(default_red[i], arg++);
+	    put_user(default_grn[i], arg++);
+	    put_user(default_blu[i], arg++);
+	}
+    
+    if (set)
+	for (i = 0; i < MAX_NR_CONSOLES; i++)
+	    if (vc_cons_allocated(i))
+	    {
+		for (j = k = 0; j < 16; j++)
+		{
+		    vc_cons[i].d->vc_palette[k++] = default_red[j];
+		    vc_cons[i].d->vc_palette[k++] = default_grn[j];
+		    vc_cons[i].d->vc_palette[k++] = default_blu[j];
+		}
+		set_palette(vc_cons[i].d);
+	    }
+    
+    return 0;
+}
+
+/////////////////////////////////////////////////////////
+//             Visible symbols for modules             //
+/////////////////////////////////////////////////////////
 
 EXPORT_SYMBOL(color_table);
 EXPORT_SYMBOL(default_red);
@@ -4413,3 +4432,4 @@ EXPORT_SYMBOL(global_cursor_default);
     EXPORT_SYMBOL(take_over_console);
     EXPORT_SYMBOL(give_up_console);
 #endif
+
