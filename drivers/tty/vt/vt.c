@@ -3006,7 +3006,6 @@ static void vc_init(VCData vc, unsigned int rows, unsigned int cols, int do_clea
 
 static int __init con_init(void)
 {
-<<<<<<< HEAD
     const String display_desc = NULL;
     struct VCData vc;
     unsigned int currcons = 0, i;
@@ -3018,7 +3017,7 @@ static int __init con_init(void)
     if (!display_desc)
     {
         fg_console = 0;
-=======
+
 	const char *display_desc = NULL;
 	struct vc_data *vc;
 	unsigned int currcons = 0, i;
@@ -3075,7 +3074,6 @@ static int __init con_init(void)
 		display_desc, vc->vc_cols, vc->vc_rows);
 	printable = 1;
 
->>>>>>> 4e25651b70b8d6ded7229ead8181619e121b648d
 	console_unlock();
 	return 0;
     }
